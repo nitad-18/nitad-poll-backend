@@ -1,34 +1,43 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import { response } from 'express';
+import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
   @Get()
   findAll() {
-    return this.userService.findAll();
+    return response.json(this.userService.findAll()).status(200);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const user: User = await this.userService.findOne(+id);
+    if (!user) {
+      return response.status(404);
+    }
+    return response.json(user).status(200);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  async update(@Param('id') id: string, @Body() editProfileDto: EditProfileDto) {
+    const user: UpdateResult = await this.userService.update(+id, editProfileDto);
+    if (!user) {
+      return response.status(404);
+    }
+    return response.json(user).status(200);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const user: DeleteResult = await this.userService.remove(+id);
+    if (!user) {
+      return response.status(404);
+    }
+    return response.status(204);
   }
 }
