@@ -20,5 +20,13 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    eqeqeq: 'warn',
+    'no-var': 'warn',
+    'prefer-arrow-callback': 'warn',
+    'no-unused-vars': 'off',
+    'import/no-unresolved': 'off',
+    'import/extensions': 'off',
+    'import/prefer-default-export': 'off',
+    'no-nested-ternary': 'off',
   },
 };
