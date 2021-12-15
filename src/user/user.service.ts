@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
+import { LoginDto } from 'src/auth/dto/login.dto';
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -19,7 +20,7 @@ export class UserService {
       .getCount();
 
     if (userCount > 0) {
-      return new Promise(null);
+      return null;
     }
 
     const saltRounds = 10;
@@ -34,7 +35,20 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User | null> {
+  async findOne(loginDto: LoginDto): Promise<User | null> {
+    let user: User;
+    try {
+      user = await this.userRepository.findOneOrFail({ username: loginDto.username });
+    } catch (err) {
+      return null;
+    }
+    if (!(await bcrypt.compare(loginDto.password, user.password))) {
+      return null;
+    }
+    return user;
+  }
+
+  async findById(id: number): Promise<User> {
     try {
       return await this.userRepository.findOneOrFail(id);
     } catch (err) {
