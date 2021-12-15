@@ -1,26 +1,60 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
+import { RegisterDto } from 'src/auth/dto/register.dto';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
+
+  async create(registerDto: RegisterDto): Promise<User | null> {
+    const userCount = await this.userRepository
+      .createQueryBuilder()
+      .select('user')
+      .from(User, 'user')
+      .orWhere('user.username = :username', { username: registerDto.username })
+      .getCount();
+
+    if (userCount > 0) {
+      return new Promise(null);
+    }
+
+    const saltRounds = 10;
+    registerDto.password = await bcrypt.hash(registerDto.password, saltRounds);
+
+    const user = this.userRepository.create(registerDto);
+
+    return await this.userRepository.save(user);
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number): Promise<User | null> {
+    try {
+      return await this.userRepository.findOneOrFail(id);
+    } catch (err) {
+      return null;
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, editProfileDto: EditProfileDto) {
+    try {
+      return await this.userRepository.update(id, editProfileDto);
+    } catch (err) {
+      return null;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    try {
+      return await this.userRepository.softDelete(id);
+    } catch (err) {
+      return null;
+    }
   }
 }
