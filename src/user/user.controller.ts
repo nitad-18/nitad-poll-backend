@@ -16,7 +16,7 @@ export class UserController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const user: User = await this.userService.findOne(+id);
+    const user: User = await this.userService.findById(+id);
     if (!user) {
       return response.status(404);
     }
