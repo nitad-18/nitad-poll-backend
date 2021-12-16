@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import config from './config/config';
+import { PollModule } from './poll/poll.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -28,6 +29,7 @@ import { UserModule } from './user/user.module';
     }),
     UserModule,
     AuthModule,
+    PollModule,
   ],
   controllers: [AppController],
   providers: [AppService],
