@@ -10,6 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PollService } from 'src/poll/poll.service';
@@ -18,6 +19,7 @@ import { CreatePollOptionDto } from './dto/create-poll-option.dto';
 import { UpdatePollOptionDto } from './dto/update-poll-option.dto';
 import { PollOptionService } from './poll-option.service';
 
+@ApiTags('Poll Option')
 @UseGuards(JwtAuthGuard)
 @Controller('options')
 export class PollOptionController {
