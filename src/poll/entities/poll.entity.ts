@@ -1,36 +1,36 @@
-import { Poll } from 'src/poll/entities/poll.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  Index,
+  JoinTable,
   ManyToMany,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class User {
+export class Poll {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Index()
-  @Column({ unique: true })
-  username: string;
-
   @Column()
-  password: string;
+  question: string;
 
-  @Column({ name: 'display_name' })
-  displayName: string;
+  @Column({ name: 'is_close', default: false })
+  isClose: boolean;
 
-  @OneToMany(() => Poll, poll => poll.author)
-  polls: Poll[];
+  @Column({ name: 'closed_date', default: null, nullable: true })
+  closedDate: Date;
 
-  @ManyToMany(() => Poll, poll => poll.users)
-  votedPolls: Poll[];
+  @ManyToOne(() => User, user => user.polls)
+  author: User;
+
+  @ManyToMany(() => User, user => user.votedPolls)
+  @JoinTable()
+  users: User[];
 
   @CreateDateColumn({ name: 'created_date' })
   createdDate: Date;
