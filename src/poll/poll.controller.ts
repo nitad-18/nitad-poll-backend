@@ -62,7 +62,7 @@ export class PollController {
     if (poll.author.id !== req.user.id) {
       return res.status(403).send();
     }
-    return await this.pollService.updateEntity(poll, updatePollDto);
+    return res.status(200).json(await this.pollService.updateEntity(poll, updatePollDto));
   }
 
   @Delete(':id')
@@ -76,5 +76,24 @@ export class PollController {
     }
     await this.pollService.remove(+id);
     return res.status(204).send();
+  }
+
+  @Post('vote/:pollId/option/:optionId')
+  async vote(
+    @Req() req: RequestWithUserId,
+    @Param('pollId') pollId,
+    @Param('optionId') optionId,
+    @Res() res: Response,
+  ) {
+    const user = await this.userService.findById(+req.user.id);
+    const poll = await this.pollService.vote(user, +pollId, +optionId);
+    if (typeof poll === 'undefined') {
+      return res.status(403).send();
+    }
+    if (!poll) {
+      return res.status(404).send();
+    }
+
+    return res.status(201).json(poll);
   }
 }

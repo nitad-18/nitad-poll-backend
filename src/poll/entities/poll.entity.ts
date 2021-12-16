@@ -1,3 +1,4 @@
+import { PollOption } from 'src/poll-option/entities/poll-option.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -7,6 +8,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -31,6 +33,9 @@ export class Poll {
   @ManyToMany(() => User, user => user.votedPolls)
   @JoinTable()
   users: User[];
+
+  @OneToMany(() => PollOption, pollOption => pollOption.poll)
+  options: PollOption[];
 
   @CreateDateColumn({ name: 'created_date' })
   createdDate: Date;
