@@ -35,7 +35,3 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     };
   }
 }
-
-export type RequestWithUserId = Request & {
-  user: { id: number };
-};
