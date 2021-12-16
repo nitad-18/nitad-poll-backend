@@ -78,7 +78,7 @@ export class PollController {
     return res.status(204).send();
   }
 
-  @Post('vote/:pollId/option/:optionId')
+  @Patch('vote/:pollId/option/:optionId')
   async vote(
     @Req() req: RequestWithUserId,
     @Param('pollId') pollId,
@@ -95,5 +95,18 @@ export class PollController {
     }
 
     return res.status(201).json(poll);
+  }
+
+  @Patch('close/:pollId')
+  async closeVote(@Req() req: RequestWithUserId, @Param('pollId') pollId, @Res() res: Response) {
+    const user = await this.userService.findById(+req.user.id);
+    const poll = await this.pollService.findOne(+pollId);
+    if (!poll) {
+      return res.status(404).send();
+    }
+    if (poll.author.id !== user.id) {
+      return res.status(403).send();
+    }
+    return res.status(200).json(await this.pollService.close(poll));
   }
 }

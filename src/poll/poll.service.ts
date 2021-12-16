@@ -134,4 +134,13 @@ export class PollService {
     }
     return null;
   }
+
+  async close(poll: Poll): Promise<Poll | null> {
+    try {
+      poll.isClose = true;
+      return await this.pollRepository.save(poll);
+    } catch (err) {
+      return null;
+    }
+  }
 }
