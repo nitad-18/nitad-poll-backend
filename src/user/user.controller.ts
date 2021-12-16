@@ -1,17 +1,19 @@
 import { Body, Controller, Delete, Get, Param, Patch, Res } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  findAll(@Res() res: Response) {
-    return res.status(200).json(this.userService.findAll());
+  async findAll(@Res() res: Response) {
+    return res.status(200).json(await this.userService.findAll());
   }
 
   @Get(':id')
