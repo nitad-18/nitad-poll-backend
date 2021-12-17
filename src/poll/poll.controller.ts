@@ -10,7 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { User } from 'src/user/entities/user.entity';
@@ -80,6 +80,8 @@ export class PollController {
     return res.status(204).send();
   }
 
+  @ApiParam({ name: 'pollId' })
+  @ApiParam({ name: 'optionId' })
   @Patch('vote/:pollId/option/:optionId')
   async vote(
     @Req() req: RequestWithUserId,
@@ -99,8 +101,9 @@ export class PollController {
     return res.status(201).json(poll);
   }
 
-  @Patch('close/:pollId')
-  async closeVote(@Req() req: RequestWithUserId, @Param('pollId') pollId, @Res() res: Response) {
+  @ApiParam({ name: 'id' })
+  @Patch('close/:id')
+  async closeVote(@Req() req: RequestWithUserId, @Param('id') pollId, @Res() res: Response) {
     const user = await this.userService.findById(+req.user.id);
     const poll = await this.pollService.findOne(+pollId);
     if (!poll) {
