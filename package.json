@@ -24,9 +24,9 @@
     "typeorm:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/config/typeorm.ts migration:create -n",
     "typeorm:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/config/typeorm.ts migration:run",
     "typeorm:prod": "node ./node_modules/typeorm/cli.js --config dist/config/typeorm.js migration:run",
-    "seed": "ts-node ./node_modules/typeorm-seeding/dist/cli.js",
-    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config --configName src/config/typeorm.ts",
-    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --configName src/config/typeorm.ts",
+    "seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js",
+    "seed:config": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config --configName src/config/typeorm.ts",
+    "seed:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed --configName src/config/typeorm.ts",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -62,6 +62,7 @@
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
     "@types/express": "^4.17.13",
+    "@types/faker": "^5.5.9",
     "@types/jest": "27.0.2",
     "@types/node": "^16.0.0",
     "@types/supertest": "^2.0.11",
@@ -70,6 +71,7 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "faker": "^5.5.3",
     "husky": "^7.0.0",
     "jest": "^27.2.5",
     "prettier": "^2.3.2",
