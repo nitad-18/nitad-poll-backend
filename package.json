@@ -19,6 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:user": "jest --config ./test/user/user-test.json",
+    "test:poll": "jest --config ./test/poll/poll-test.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/config/typeorm.ts",
     "typeorm:auto-create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/config/typeorm.ts migration:generate -n",
     "typeorm:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/config/typeorm.ts migration:create -n",
@@ -77,6 +79,7 @@
     "prettier": "^2.3.2",
     "prettier-plugin-organize-imports": "^2.3.4",
     "source-map-support": "^0.5.20",
+    "sqlite3": "^5.0.2",
     "supertest": "^6.1.3",
     "ts-jest": "^27.0.3",
     "ts-loader": "^9.2.3",
@@ -90,7 +93,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "test",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
