@@ -27,8 +27,12 @@ export class PollController {
   constructor(private readonly pollService: PollService, private userService: UserService) {}
 
   @Post()
-  async create(@Body() createPollDto: CreatePollDto, @Res() res: Response) {
-    const user: User = await this.userService.findById(createPollDto.userId);
+  async create(
+    @Req() req: RequestWithUserId,
+    @Body() createPollDto: CreatePollDto,
+    @Res() res: Response,
+  ) {
+    const user: User = await this.userService.findById(req.user.id);
     if (!user) {
       return res.status(404).send();
     }
