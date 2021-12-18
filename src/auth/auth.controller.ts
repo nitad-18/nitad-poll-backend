@@ -30,7 +30,7 @@ export class AuthController {
     }
     const token: string = await this.authService.createToken(user);
     res.cookie('access_token', token, { httpOnly: true, secure: false });
-    return res.status(200).json({ message: 'Successfully Login' });
+    return res.status(200).json(user);
   }
 
   @Get('me')
