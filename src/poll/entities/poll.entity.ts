@@ -40,9 +40,9 @@ export class Poll {
   @CreateDateColumn({ name: 'created_date' })
   createdDate: Date;
 
-  @UpdateDateColumn({ name: 'updated_date' })
+  @UpdateDateColumn({ name: 'updated_date', select: false })
   updatedDate: Date;
 
-  @DeleteDateColumn({ name: 'deleted_date' })
+  @DeleteDateColumn({ name: 'deleted_date', select: false })
   deletedDate: Date;
 }
