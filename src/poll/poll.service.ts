@@ -15,64 +15,26 @@ export class PollService {
     @InjectRepository(PollOption) private pollOptionRepository: Repository<PollOption>,
   ) {}
 
-  async create(createPollDto: CreatePollDto, user: User): Promise<PollWithoutDeletedDate | null> {
+  async create(createPollDto: CreatePollDto, user: User): Promise<PollWithoutDeletedDate> {
     const poll = await this.pollRepository.create(createPollDto);
     poll.author = user;
     const { deletedDate, ...result } = await this.pollRepository.save(poll);
     return result;
   }
 
-  async findAll() {
-    return await this.pollRepository
-      .createQueryBuilder()
-      .select([
-        'poll.id',
-        'poll.question',
-        'poll.isClose',
-        'poll.closedDate',
-        'poll.createdDate',
-        'user.id',
-        'user.username',
-        'user.displayName',
-        'poll_option.id',
-        'poll_option.topic',
-        'poll_option.votes',
-      ])
-      .from(Poll, 'poll')
-      .leftJoin('poll.author', 'user')
-      .leftJoin('poll.options', 'poll_option')
-      .getMany();
+  async findAll(): Promise<Poll[] | undefined> {
+    return await this.pollRepository.find({ relations: ['author', 'users', 'options'] });
   }
 
-  async findOne(pollId: number): Promise<Poll | null> {
-    return await this.pollRepository
-      .createQueryBuilder()
-      .where('poll.id = :id', { id: pollId })
-      .select([
-        'poll.id',
-        'poll.question',
-        'poll.isClose',
-        'poll.closedDate',
-        'poll.createdDate',
-        'user.id',
-        'user.username',
-        'user.displayName',
-        'poll_option.id',
-        'poll_option.topic',
-        'poll_option.votes',
-      ])
-      .from(Poll, 'poll')
-      .leftJoin('poll.author', 'user')
-      .leftJoin('poll.options', 'poll_option')
-      .getOne();
+  async findOne(pollId: number): Promise<Poll | undefined> {
+    return await this.pollRepository.findOne(
+      { id: pollId },
+      { relations: ['author', 'users', 'options'] },
+    );
   }
 
-  async update(id: number, updatePollDto: UpdatePollDto): Promise<UpdateResult | null> {
-    try {
-      return await this.pollRepository.update(id, updatePollDto);
-    } catch (err) {
-      return null;
-    }
+  async update(id: number, updatePollDto: UpdatePollDto): Promise<UpdateResult> {
+    return await this.pollRepository.update(id, updatePollDto);
   }
 
   async updateEntity(poll: Poll, updatePollDto: UpdatePollDto): Promise<Poll> {
@@ -80,36 +42,12 @@ export class PollService {
     return await this.pollRepository.save(poll);
   }
 
-  async remove(id: number): Promise<DeleteResult | null> {
-    try {
-      return await this.pollRepository.softDelete(id);
-    } catch (err) {
-      return null;
-    }
+  async remove(id: number): Promise<DeleteResult> {
+    return await this.pollRepository.softDelete(id);
   }
 
   async vote(user: User, pollId: number, optionId: number): Promise<Poll | null> {
-    const poll: Poll = await this.pollRepository
-      .createQueryBuilder()
-      .where('poll.id = :id', { id: pollId })
-      .select([
-        'poll.id',
-        'poll.question',
-        'poll.isClose',
-        'poll.closedDate',
-        'poll.createdDate',
-        'user.id',
-        'user.username',
-        'user.displayName',
-        'poll_option.id',
-        'poll_option.topic',
-        'poll_option.votes',
-      ])
-      .from(Poll, 'poll')
-      .leftJoin('poll.options', 'poll_option')
-      .leftJoin('poll.users', 'user')
-      .getOne();
-
+    const poll: Poll = await this.findOne(pollId);
     if (!poll) {
       return null;
     }
@@ -136,11 +74,7 @@ export class PollService {
   }
 
   async close(poll: Poll): Promise<Poll | null> {
-    try {
-      poll.isClose = true;
-      return await this.pollRepository.save(poll);
-    } catch (err) {
-      return null;
-    }
+    poll.isClose = true;
+    return await this.pollRepository.save(poll);
   }
 }

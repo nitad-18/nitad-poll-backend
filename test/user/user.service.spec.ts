@@ -68,7 +68,7 @@ describe('UserService', () => {
   });
 
   it('should return all userData for findAll', async () => {
-    const allUsers = await repository.find({ select: ['id', 'username', 'displayName'] });
+    const allUsers = await repository.find();
     const result = await service.findAll();
     expect(result.length).toEqual(50);
     expect(result).toEqual(allUsers);
@@ -86,7 +86,7 @@ describe('UserService', () => {
       displayName: userData.displayName,
     };
     const user = await service.create(userData);
-    const result = await service.findAll();
+    const result = await repository.find();
     expect(result.length).toEqual(51);
     expect(user).toEqual(expected);
   });
@@ -106,9 +106,11 @@ describe('UserService', () => {
       username: userData.username,
       displayName: userData.displayName,
     };
-    await service.create(userData);
-    const result = await service.findOne(loginData);
-    expect(result).toEqual(expected);
+    userData.password = await bcrypt.hash(userData.password, 10);
+    const user = await repository.create(userData);
+    await repository.save(user);
+
+    expect(await service.findOne(loginData)).toEqual(expected);
   });
 
   it('should return userData for findById', async () => {
@@ -117,32 +119,30 @@ describe('UserService', () => {
     }
   });
 
-  it('should return user for getAllUserDataByID', async () => {
-    for (const target of targets) {
-      expect(await service.getAllUserDataByID(target[0])).toEqual(allUsers[target[0] - 1]);
-    }
-  });
-
-  it('should return user for updatedUser', async () => {
+  it('should updated user', async () => {
     const userIds = Array.from(targets.keys());
     await service.update(userIds[0], { displayName: 'updated' });
     await service.update(userIds[1], { username: 'updated' });
     await service.update(userIds[2], { password: 'password' });
 
-    expect((await service.getAllUserDataByID(userIds[0])).displayName).toEqual('updated');
-    expect((await service.getAllUserDataByID(userIds[1])).username).toEqual('updated');
-    const getPassword = (await service.getAllUserDataByID(userIds[2])).password;
-    expect(await bcrypt.compare('password', getPassword)).toEqual(true);
+    expect((await repository.findOne(userIds[0])).displayName).toEqual('updated');
+    expect((await repository.findOne(userIds[1])).username).toEqual('updated');
+    const user = await repository
+      .createQueryBuilder('user')
+      .where({ id: userIds[2] })
+      .addSelect('user.password')
+      .getOne();
+    expect(await bcrypt.compare('password', user.password)).toEqual(true);
   });
 
-  it('should return user for that not removed', async () => {
+  it('should return user that not removed', async () => {
     const removedUser: UserData[] = [];
     let count = 0;
     for (const target of targets) {
       removedUser.push(target[1]);
       await service.remove(target[0]);
     }
-    const result: UserData[] = await service.findAll();
+    const result: UserData[] = await repository.find();
 
     for (const user of result) {
       if (targets.has(user.id)) {

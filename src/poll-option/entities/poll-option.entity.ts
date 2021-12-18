@@ -23,12 +23,12 @@ export class PollOption {
   @ManyToOne(() => Poll, poll => poll.options)
   poll: Poll;
 
-  @CreateDateColumn({ name: 'created_date' })
+  @CreateDateColumn({ name: 'created_date', select: false })
   createdDate: Date;
 
-  @UpdateDateColumn({ name: 'updated_date' })
+  @UpdateDateColumn({ name: 'updated_date', select: false })
   updatedDate: Date;
 
-  @DeleteDateColumn({ name: 'deleted_date' })
+  @DeleteDateColumn({ name: 'deleted_date', select: false })
   deletedDate: Date;
 }

@@ -20,7 +20,7 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column({ name: 'display_name' })
@@ -32,12 +32,12 @@ export class User {
   @ManyToMany(() => Poll, poll => poll.users)
   votedPolls: Poll[];
 
-  @CreateDateColumn({ name: 'created_date' })
+  @CreateDateColumn({ name: 'created_date', select: false })
   createdDate: Date;
 
-  @UpdateDateColumn({ name: 'updated_date' })
+  @UpdateDateColumn({ name: 'updated_date', select: false })
   updatedDate: Date;
 
-  @DeleteDateColumn({ name: 'deleted_date' })
+  @DeleteDateColumn({ name: 'deleted_date', select: false })
   deletedDate: Date;
 }

@@ -26,7 +26,7 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
     const user = await this.userService.findOne(loginDto);
     if (!user) {
-      return res.status(401).json({ message: 'Unauthorize' });
+      return res.status(401).json({ message: 'Wrong username or password' });
     }
     const token: string = await this.authService.createToken(user);
     res.cookie('access_token', token, { httpOnly: true, secure: false });
