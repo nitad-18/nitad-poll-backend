@@ -1,34 +1,20 @@
-import { Poll } from 'src/poll/entities/poll.entity';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity } from 'typeorm';
+
+// TODO #TASK 4 Complete the poll-option schema
+//* The Schema MUST be
+//*  {
+//*    id: number
+//*    topic: string
+//*    votes: number          <----------- default_value = 0
+//*    poll: Poll             <----------- Many To One Relationship
+//*    createdDate: Date      <----------- name_in_table = created_date
+//*    updatedDate: Date      <----------- name_in_table = updated_date
+//*    deletedDate: Date      <----------- name_in_table = deleted_date
+//*  }
+//*
+//*  After complete the scheme then create and run the poll-option's migration file
+//*  HINT auto create the migration file run command `typeorm:auto-create <migration file name>`
+//*  HINT run the migration files run command `typeorm:run`
 
 @Entity()
-export class PollOption {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  topic: string;
-
-  @Column({ default: 0 })
-  votes: number;
-
-  @ManyToOne(() => Poll, poll => poll.options)
-  poll: Poll;
-
-  @CreateDateColumn({ name: 'created_date', select: false })
-  createdDate: Date;
-
-  @UpdateDateColumn({ name: 'updated_date', select: false })
-  updatedDate: Date;
-
-  @DeleteDateColumn({ name: 'deleted_date', select: false })
-  deletedDate: Date;
-}
+export class PollOption {}

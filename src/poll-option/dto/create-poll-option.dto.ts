@@ -1,12 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+//  TODO #TASK 4 Complete the pollOptionDto
+//* Schema MUSH be
+//*  {
+//*     topic: string   <----------- CANNOT Be Empty
+//*     pollId: string   <----------- CANNOT Be Empty
+//*  }
 
-export class CreatePollOptionDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  topic: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  pollId: number;
-}
+export class CreatePollOptionDto {}
