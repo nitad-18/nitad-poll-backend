@@ -9,6 +9,9 @@ import { PollOptionModule } from './poll-option/poll-option.module';
 import { PollModule } from './poll/poll.module';
 import { UserModule } from './user/user.module';
 
+//  TODO #TASK 1 setup config of typeorm module
+//* Using the configService to setup config for typeorm module
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,10 +22,10 @@ import { UserModule } from './user/user.module';
       imports: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
-        port: configService.get<number>('database.port'),
-        username: configService.get<string>('database.username'),
-        password: configService.get<string>('database.password'),
-        database: configService.get<string>('database.name'),
+        port: 
+        username: 
+        password: 
+        database: 
         synchronize: false,
         autoLoadEntities: true,
       }),

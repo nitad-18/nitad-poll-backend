@@ -1,17 +1,18 @@
-import * as dotenv from 'dotenv';
 import { ConnectionOptionsWithSeed } from 'src/utilities/type';
 
-const envType = process.env.MODE_ENV || 'development';
-
-dotenv.config({ path: `.env.${envType}` });
+//   TODO #TASK 1 set up config for the typeorm
+//*  Config MUST use ENV file .env.${NODE_ENV} 
+//*  NODE_ENV = development --> use .env.development 
+//*  NODE_ENV = production --> use .env.production
+//*  HINT setup same as config.ts 
 
 const options: ConnectionOptionsWithSeed = {
   type: 'postgres',
-  host: process.env.DATABASE_HOST,
-  port: parseInt(process.env.DATABASE_PORT) || 5432,
-  database: process.env.DATABASE_NAME,
-  username: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
+  host: 
+  port: 
+  database: 
+  username: 
+  password: 
   synchronize: false,
   entities: ['src/**/entities/*.entity{.ts,.js}'],
   migrations: ['src/database/migrations/*{.ts,.js}'],
