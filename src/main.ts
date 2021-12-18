@@ -7,7 +7,13 @@ import { AppModule } from './app.module';
 //  TODO #TASK 1 Set Service PORT
 //* Using the configService to set up the service's Port
 
-//  TODO #TASK X Set API Document and Swagger-Stats
+//  TODO #TASK 6 Set API Document and Swagger-Stats
+//*
+//* >> Setup the API Doc
+//* HINT Keyword = `nestjs openapi`
+//*
+//* >> Setup the Swagger-Stats
+//* HINT Keyword = `swagger stats`
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
