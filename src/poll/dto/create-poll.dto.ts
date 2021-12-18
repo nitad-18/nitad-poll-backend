@@ -1,9 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MinLength } from 'class-validator';
+//  TODO #TASK 3 Complete the pollDto
+//* Schema MUSH be
+//*  {
+//*     question: string   <----------- CANNOT Be Empty, min length = 4
+//*  }
 
-export class CreatePollDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @MinLength(4)
-  question: string;
-}
+export class CreatePollDto {}

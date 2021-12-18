@@ -1,48 +1,22 @@
-import { PollOption } from 'src/poll-option/entities/poll-option.entity';
-import { User } from 'src/user/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity } from 'typeorm';
+
+// TODO #TASK 3 Complete the poll schema
+//* The Schema MUST be
+//*  {
+//*    id: number
+//*    question: string
+//*    isClose: boolean       <----------- name_in_table = is_close, default_value = false
+//*    author: User           <----------- Many To One Relationship
+//*    users: User[]          <----------- Many To Many Relationship
+//*    closedDate: Date       <----------- name_in_table = closed_date, dafault_value = null, nullable
+//*    createdDate: Date      <----------- name_in_table = created_date
+//*    updatedDate: Date      <----------- name_in_table = updated_date
+//*    deletedDate: Date      <----------- name_in_table = deleted_date
+//*  }
+//*
+//*  After complete the scheme then create and run the poll's migration file
+//*  HINT auto create the migration file run command `typeorm:auto-create <migration file name>`
+//*  HINT run the migration files run command `typeorm:run`
 
 @Entity()
-export class Poll {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  question: string;
-
-  @Column({ name: 'is_close', default: false })
-  isClose: boolean;
-
-  @Column({ name: 'closed_date', default: null, nullable: true })
-  closedDate: Date;
-
-  @ManyToOne(() => User, user => user.polls)
-  author: User;
-
-  @ManyToMany(() => User, user => user.votedPolls)
-  @JoinTable()
-  users: User[];
-
-  @OneToMany(() => PollOption, pollOption => pollOption.poll)
-  options: PollOption[];
-
-  @CreateDateColumn({ name: 'created_date' })
-  createdDate: Date;
-
-  @UpdateDateColumn({ name: 'updated_date', select: false })
-  updatedDate: Date;
-
-  @DeleteDateColumn({ name: 'deleted_date', select: false })
-  deletedDate: Date;
-}
+export class Poll {}

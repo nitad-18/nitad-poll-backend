@@ -10,49 +10,50 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
-import { PollWithoutDeletedDate, RequestWithUserId } from 'src/utilities/type';
+import { RequestWithUserId } from 'src/utilities/type';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
-import { PollService } from './poll.service';
 
-@ApiTags('Poll')
+// TODO Complete the CRUD of poll EXCEPT PATCH polls/vote/{pollId}/options/{optionId} and PATCH polls/close{pollId}
+//*
+//* >> POST polls
+//*      - return status 201 if work properly
+//*
+//* >> GET polls
+//*      - return status 200 if work properly
+//*
+//* >> GET polls/:id
+//*      - return status 200 if work properly
+//*      - return status 404 if not found poll
+//*
+//* >> PATCH polls/:id
+//*      - return status 200 if work properly
+//*      - return status 403 if user not match with poll's author
+//*      - return status 404 if not found poll
+//*
+//* >> DELETE polls/:id
+//*      - return status 204 if work properly
+//*      - return status 403 if logged in user not match with poll's author
+//*      - return status 404 if not found poll
+//*
+
 @UseGuards(JwtAuthGuard)
 @Controller('polls')
 export class PollController {
-  constructor(private readonly pollService: PollService, private userService: UserService) {}
-
   @Post()
   async create(
     @Req() req: RequestWithUserId,
     @Body() createPollDto: CreatePollDto,
     @Res() res: Response,
-  ) {
-    const user: User = await this.userService.findById(req.user.id);
-    if (!user) {
-      return res.status(404).send();
-    }
-    const poll: PollWithoutDeletedDate = await this.pollService.create(createPollDto, user);
-    return res.status(201).json(poll);
-  }
+  ) {}
 
   @Get()
-  async findAll(@Res() res: Response) {
-    return res.status(200).json(await this.pollService.findAll());
-  }
+  async findAll(@Res() res: Response) {}
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res: Response) {
-    const poll = await this.pollService.findOne(+id);
-    if (!poll) {
-      return res.status(404).send();
-    }
-    return res.status(200).json(poll);
-  }
+  async findOne(@Param('id') id: string, @Res() res: Response) {}
 
   @Patch(':id')
   async update(
@@ -60,62 +61,19 @@ export class PollController {
     @Param('id') id: string,
     @Body() updatePollDto: UpdatePollDto,
     @Res() res: Response,
-  ) {
-    const poll = await this.pollService.findOne(+id);
-    if (!poll) {
-      return res.status(404).send();
-    }
-    if (poll.author.id !== req.user.id) {
-      return res.status(403).send();
-    }
-    return res.status(200).json(await this.pollService.updateEntity(poll, updatePollDto));
-  }
+  ) {}
 
   @Delete(':id')
-  async remove(@Req() req: RequestWithUserId, @Param('id') id: string, @Res() res: Response) {
-    const poll = await this.pollService.findOne(+id);
-    if (!poll) {
-      return res.status(404).send();
-    }
-    if (poll.author.id !== req.user.id) {
-      return res.status(403).send();
-    }
-    await this.pollService.remove(+id);
-    return res.status(204).send();
-  }
+  async remove(@Req() req: RequestWithUserId, @Param('id') id: string, @Res() res: Response) {}
 
-  @ApiParam({ name: 'pollId' })
-  @ApiParam({ name: 'optionId' })
   @Patch('vote/:pollId/options/:optionId')
   async vote(
     @Req() req: RequestWithUserId,
     @Param('pollId') pollId,
     @Param('optionId') optionId,
     @Res() res: Response,
-  ) {
-    const user = await this.userService.findById(+req.user.id);
-    const poll = await this.pollService.vote(user, +pollId, +optionId);
-    if (typeof poll === 'undefined') {
-      return res.status(403).send();
-    }
-    if (!poll) {
-      return res.status(404).send();
-    }
+  ) {}
 
-    return res.status(200).json(poll);
-  }
-
-  @ApiParam({ name: 'id' })
   @Patch('close/:id')
-  async closeVote(@Req() req: RequestWithUserId, @Param('id') pollId, @Res() res: Response) {
-    const user = await this.userService.findById(+req.user.id);
-    const poll = await this.pollService.findOne(+pollId);
-    if (!poll) {
-      return res.status(404).send();
-    }
-    if (poll.author.id !== user.id) {
-      return res.status(403).send();
-    }
-    return res.status(200).json(await this.pollService.close(poll));
-  }
+  async closeVote(@Req() req: RequestWithUserId, @Param('id') pollId, @Res() res: Response) {}
 }
