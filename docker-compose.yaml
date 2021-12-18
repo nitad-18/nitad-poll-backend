@@ -27,4 +27,4 @@ services:
     ports:
       - ${PGADMIN_PORT}:${PGADMIN_PORT}
     volumes:
-      - ./pgadmin/servers.json:/pgadmin4/servers.json
+      - /pgadmin/servers.json:/pgadmin4/servers.json
