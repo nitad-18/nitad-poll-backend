@@ -1,49 +1,28 @@
 import { Body, Controller, Delete, Get, Param, Patch, Res } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
-import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
-@ApiTags('User')
+//  TODO #TASK 2 Complete the User's CRUD
+//* HINT the process in each endpoint MUST use the parameter
+
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async findAll(@Res() res: Response) {
-    return res.status(200).json(await this.userService.findAll());
-  }
+  async findAll(@Res() res: Response) {}
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res: Response) {
-    const user: User = await this.userService.findById(+id);
-    if (!user) {
-      return res.status(404);
-    }
-    return res.status(200).json(user);
-  }
+  async findOne(@Param('id') id: string, @Res() res: Response) {}
 
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() editProfileDto: EditProfileDto,
     @Res() res: Response,
-  ) {
-    const user: UpdateResult = await this.userService.update(+id, editProfileDto);
-    if (!user) {
-      return res.status(404);
-    }
-    return res.status(200).json(user);
-  }
+  ) {}
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: Response) {
-    const user: DeleteResult = await this.userService.remove(+id);
-    if (!user) {
-      return res.status(404);
-    }
-    return res.status(204);
-  }
+  async remove(@Param('id') id: string, @Res() res: Response) {}
 }

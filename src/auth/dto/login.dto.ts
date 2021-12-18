@@ -1,9 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+//  TODO #TASK 2 Complete the register dto
+//* Schema MUSH be
+//* {
+//*   username: string     <----------- CANNOT Be Empty
+//*   password: string     <----------- CANNOT Be Empty, min length = 8
+//* }
 
-export class LoginDto {
-  @ApiProperty()
-  username: string;
-
-  @ApiProperty()
-  password: string;
-}
+export class LoginDto {}

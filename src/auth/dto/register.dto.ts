@@ -1,18 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, Length, MinLength } from 'class-validator';
+//  TODO #TASK 2 Complete the register dto
+//* Schema MUSH be
+//* {
+//*   username: string     <----------- CANNOT Be Empty
+//*   password: string     <----------- CANNOT Be Empty, min length = 8
+//*   displayName: string  <----------- CANNOT Be Empty, length between 1 to 15
+//* }
 
-export class RegisterDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  username: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @MinLength(8, { message: 'Password must at least 8 characters' })
-  password: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @Length(1, 15, { message: 'Displayname must between 1 and 15 characters' })
-  displayName: string;
-}
+export class RegisterDto {}
