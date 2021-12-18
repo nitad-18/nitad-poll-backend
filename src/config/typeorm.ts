@@ -1,14 +1,9 @@
 import * as dotenv from 'dotenv';
-import { ConnectionOptions } from 'typeorm';
+import { ConnectionOptionsWithSeed } from 'src/utilities/type';
 
 const envType = process.env.MODE_ENV || 'development';
 
 dotenv.config({ path: `.env.${envType}` });
-
-type ConnectionOptionsWithSeed = ConnectionOptions & {
-  seeds: string[];
-  factories: string[];
-};
 
 const options: ConnectionOptionsWithSeed = {
   type: 'postgres',
