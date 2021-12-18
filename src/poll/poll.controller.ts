@@ -86,7 +86,7 @@ export class PollController {
 
   @ApiParam({ name: 'pollId' })
   @ApiParam({ name: 'optionId' })
-  @Patch('vote/:pollId/option/:optionId')
+  @Patch('vote/:pollId/options/:optionId')
   async vote(
     @Req() req: RequestWithUserId,
     @Param('pollId') pollId,
@@ -102,7 +102,7 @@ export class PollController {
       return res.status(404).send();
     }
 
-    return res.status(201).json(poll);
+    return res.status(200).json(poll);
   }
 
   @ApiParam({ name: 'id' })
