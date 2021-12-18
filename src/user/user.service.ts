@@ -47,7 +47,6 @@ export class UserService {
     }
 
     if (!(await bcrypt.compare(loginDto.password, user.password))) {
-      console.log(user);
       return null;
     }
 
