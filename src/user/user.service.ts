@@ -33,7 +33,11 @@ export class UserService {
 
     const user = this.userRepository.create(registerDto);
     const createdUser = await this.userRepository.save(user);
-    return createdUser as UserData;
+    return new User({
+      id: createdUser.id,
+      username: createdUser.username,
+      displayName: createdUser.displayName,
+    });
   }
 
   async findAll(): Promise<UserData[]> {
