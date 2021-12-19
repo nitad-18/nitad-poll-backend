@@ -59,7 +59,8 @@
   ```
 
 ### Generate a mock data (Optional)
-this command will generate 20 users and 10 polls with 2 up to 7 poll-options in each poll
+- this command will generate 20 users and 10 polls with 2 up to 7 poll-options in each poll
+- password = `adminadmin`
 - run command
   ```bash
   $ yarn seed:run
