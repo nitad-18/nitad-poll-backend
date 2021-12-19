@@ -121,7 +121,7 @@ After we setup config of the service we should create an user entity for our ser
 - open the `user.controller.ts` and complete all endpoint
 - open the `user.module.ts` and import the typeorm module for user entity 
 
-You can test this tasks by run the command `yarn test:user`
+You can test this tasks by run the command `yarn test:user` (after finish task 5)
 
 ## Task 3 Complete the Poll Entity
 After we create an user entity next we will create a poll entity to store the question and poll's status
