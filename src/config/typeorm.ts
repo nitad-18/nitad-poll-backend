@@ -1,9 +1,3 @@
-import * as dotenv from 'dotenv';
-import { ConnectionOptions } from 'typeorm';
-
-const envType = process.env.MODE_ENV || 'development';
-
-dotenv.config({ path: `.env.${envType}` });
 
 type ConnectionOptionsWithSeed = ConnectionOptions & {
   seeds: string[];
