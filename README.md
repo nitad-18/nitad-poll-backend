@@ -18,7 +18,7 @@
   $ cd <your directory that want project to install>
 
   # Clone project
-  $ git clone -b template https://github.com/Nitad-18/nitad-poll-backend.git
+  $ git clone -b master https://github.com/Nitad-18/nitad-poll-backend.git
 ```
 
 ## Installation
