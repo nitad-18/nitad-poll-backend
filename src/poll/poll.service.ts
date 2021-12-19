@@ -103,9 +103,9 @@ export class PollService {
     for (let i = 0; i < poll.options.length; i++) {
       if (poll.options[i].id === optionId) {
         poll.users.push(user);
-        await this.pollRepository.save(poll);
         await this.pollOptionRepository.update(optionId, { votes: ++poll.options[i].votes });
-        return poll;
+        const updatedPoll = await this.pollRepository.save(poll);
+        return new Poll(updatedPoll);
       }
     }
     throw new NotFoundException({
