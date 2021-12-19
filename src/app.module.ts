@@ -15,10 +15,10 @@ import config from './config/config';
       imports: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
-        port: configService.get<number>('database.port'),
-        username: configService.get<string>('database.username'),
-        password: configService.get<string>('database.password'),
-        database: configService.get<string>('database.name'),
+        port: 
+        username: 
+        password: 
+        database: 
         synchronize: false,
         autoLoadEntities: true,
       }),
