@@ -1,9 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Patch, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Res,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
-import { User } from './entities/user.entity';
+import { UserData } from 'src/utilities/type';
 import { UserService } from './user.service';
 
 @ApiTags('User')
@@ -12,17 +21,15 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async findAll(@Res() res: Response) {
-    return res.status(200).json(await this.userService.findAll());
+  async findAll(@Res() res: Response): Promise<Response> {
+    const user: UserData[] = await this.userService.findAll();
+    return res.status(HttpStatus.OK).json(user);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
-    const user: User = await this.userService.findById(+id);
-    if (!user) {
-      return res.status(404);
-    }
-    return res.status(200).json(user);
+    const user: UserData = await this.userService.findById(+id);
+    return res.status(HttpStatus.OK).json(user);
   }
 
   @Patch(':id')
@@ -31,19 +38,15 @@ export class UserController {
     @Body() editProfileDto: EditProfileDto,
     @Res() res: Response,
   ) {
-    const user: UpdateResult = await this.userService.update(+id, editProfileDto);
-    if (!user) {
-      return res.status(404);
-    }
-    return res.status(200).json(user);
+    await this.userService.update(+id, editProfileDto);
+    const user = this.userService.findById(+id);
+    return res.status(HttpStatus.OK).json(user);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string, @Res() res: Response) {
-    const user: DeleteResult = await this.userService.remove(+id);
-    if (!user) {
-      return res.status(404);
-    }
-    return res.status(204);
+    await this.userService.remove(+id);
+    return res.send();
   }
 }

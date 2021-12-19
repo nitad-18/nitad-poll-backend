@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PollOption } from 'src/poll-option/entities/poll-option.entity';
 import { User } from 'src/user/entities/user.entity';
 import { PollWithoutDeletedDate } from 'src/utilities/type';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { Poll } from './entities/poll.entity';
@@ -18,23 +18,46 @@ export class PollService {
   async create(createPollDto: CreatePollDto, user: User): Promise<PollWithoutDeletedDate> {
     const poll = await this.pollRepository.create(createPollDto);
     poll.author = user;
-    const { deletedDate, ...result } = await this.pollRepository.save(poll);
-    return result;
+    const createdPoll = await this.pollRepository.save(poll);
+    return new Poll({
+      id: createdPoll.id,
+      question: createdPoll.question,
+      isClose: createdPoll.isClose,
+      author: createdPoll.author,
+      options: createdPoll.options,
+      users: createdPoll.users,
+      closedDate: createdPoll.closedDate,
+      createdDate: createdPoll.createdDate,
+    });
   }
 
-  async findAll(): Promise<Poll[] | undefined> {
+  async findAll(): Promise<Poll[]> {
     return await this.pollRepository.find({ relations: ['author', 'users', 'options'] });
   }
 
-  async findOne(pollId: number): Promise<Poll | undefined> {
-    return await this.pollRepository.findOne(
+  async findOne(pollId: number): Promise<Poll> {
+    const poll = await this.pollRepository.findOne(
       { id: pollId },
       { relations: ['author', 'users', 'options'] },
     );
+    if (!poll) {
+      throw new NotFoundException({
+        reason: 'NOT_FOUND_ENTITY',
+        message: 'Not found poll',
+      });
+    }
+    return poll;
   }
 
-  async update(id: number, updatePollDto: UpdatePollDto): Promise<UpdateResult> {
-    return await this.pollRepository.update(id, updatePollDto);
+  async update(id: number, updatePollDto: UpdatePollDto): Promise<boolean> {
+    const result = await this.pollRepository.update(id, updatePollDto);
+    if (result.affected === 0) {
+      throw new NotFoundException({
+        reason: 'NOT_FOUND_ENTITY',
+        message: 'Not found poll',
+      });
+    }
+    return true;
   }
 
   async updateEntity(poll: Poll, updatePollDto: UpdatePollDto): Promise<Poll> {
@@ -42,23 +65,39 @@ export class PollService {
     return await this.pollRepository.save(poll);
   }
 
-  async remove(id: number): Promise<DeleteResult> {
-    return await this.pollRepository.softDelete(id);
+  async remove(id: number): Promise<boolean> {
+    const result = await this.pollRepository.softDelete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException({
+        reason: 'NOT_FOUND_ENTITY',
+        message: 'Not found poll',
+      });
+    }
+    return true;
   }
 
   async vote(user: User, pollId: number, optionId: number): Promise<Poll | null> {
     const poll: Poll = await this.findOne(pollId);
     if (!poll) {
-      return null;
+      throw new NotFoundException({
+        reason: 'NOT_FOUND_ENTITY',
+        message: 'Not found poll',
+      });
     }
 
     if (poll.isClose) {
-      return undefined;
+      throw new ForbiddenException({
+        reason: 'FORBIDDEN',
+        message: 'Cannot close other user poll',
+      });
     }
 
     for (const votedUser of poll.users) {
       if (votedUser.id === user.id) {
-        return undefined;
+        throw new ForbiddenException({
+          reason: 'FORBIDDEN',
+          message: 'Cannot vote poll that you have been already voted',
+        });
       }
     }
 
@@ -70,10 +109,13 @@ export class PollService {
         return poll;
       }
     }
-    return null;
+    throw new NotFoundException({
+      reason: 'NOT_FOUND_ENTITY',
+      message: 'Not found poll',
+    });
   }
 
-  async close(poll: Poll): Promise<Poll | null> {
+  async close(poll: Poll): Promise<Poll> {
     poll.isClose = true;
     return await this.pollRepository.save(poll);
   }

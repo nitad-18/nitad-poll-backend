@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
 import { LoginDto } from 'src/auth/dto/login.dto';
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UserData } from 'src/utilities/type';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 
 const SALTROUND = 10;
@@ -14,27 +19,37 @@ const SALTROUND = 10;
 export class UserService {
   constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
 
-  async create(registerDto: RegisterDto): Promise<UserData | null> {
+  async create(registerDto: RegisterDto): Promise<UserData> {
     const findUser = await this.userRepository.findOne({ username: registerDto.username });
 
     if (findUser) {
-      return null;
+      throw new UnprocessableEntityException({
+        reason: 'INVALID_INPUT',
+        message: 'User already existex',
+      });
     }
 
     registerDto.password = await bcrypt.hash(registerDto.password, SALTROUND);
 
     const user = this.userRepository.create(registerDto);
-    const { createdDate, deletedDate, updatedDate, password, ...result } =
-      await this.userRepository.save(user);
-
-    return result;
+    const createdUser = await this.userRepository.save(user);
+    return createdUser as UserData;
   }
 
   async findAll(): Promise<UserData[]> {
-    return await this.userRepository.find();
+    const users = await this.userRepository.find();
+    return users.map(
+      user =>
+        new User({
+          id: user.id,
+          username: user.username,
+          displayName: user.displayName,
+          password: user.password,
+        }),
+    );
   }
 
-  async findOne(loginDto: LoginDto): Promise<UserData | null> {
+  async findOne(loginDto: LoginDto): Promise<UserData> {
     const user: User = await this.userRepository
       .createQueryBuilder('user')
       .where({ username: loginDto.username })
@@ -43,33 +58,59 @@ export class UserService {
       .getOne();
 
     if (!user) {
-      return null;
+      throw new UnauthorizedException({
+        reason: 'INVALID_INPUT',
+        message: 'Incorrect username or password',
+      });
     }
 
     if (!(await bcrypt.compare(loginDto.password, user.password))) {
-      return null;
+      throw new UnauthorizedException({
+        reason: 'INVALID_INPUT',
+        message: 'Incorrect username or password',
+      });
     }
 
-    const { password, ...result } = user;
-    return result;
+    return new User({
+      id: user.id,
+      username: user.username,
+      displayName: user.displayName,
+    });
   }
 
-  async findById(id: number): Promise<User | null> {
-    return await this.userRepository.findOne(id);
-  }
-
-  async update(id: number, editProfileDto: EditProfileDto): Promise<UpdateResult | null> {
-    try {
-      if (editProfileDto.password) {
-        editProfileDto.password = await bcrypt.hash(editProfileDto.password, SALTROUND);
-      }
-      return await this.userRepository.update(id, editProfileDto);
-    } catch (err) {
-      return null;
+  async findById(id: number): Promise<User> {
+    const user: User = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException({
+        reason: 'NOT_FOUND_ENTITY',
+        message: 'Not found user',
+      });
     }
+    return user;
   }
 
-  async remove(id: number): Promise<DeleteResult | null> {
-    return await this.userRepository.softDelete(id);
+  async update(id: number, editProfileDto: EditProfileDto): Promise<boolean> {
+    if (editProfileDto.password) {
+      editProfileDto.password = await bcrypt.hash(editProfileDto.password, SALTROUND);
+    }
+    const result = await this.userRepository.update(id, editProfileDto);
+    if (result.affected === 0) {
+      throw new NotFoundException({
+        reason: 'NOT_FOUND_ENTITY',
+        message: 'Not found user',
+      });
+    }
+    return true;
+  }
+
+  async remove(id: number): Promise<boolean> {
+    const result: DeleteResult = await this.userRepository.softDelete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException({
+        reason: 'NOT_FOUND_ENTITY',
+        message: 'Not found user',
+      });
+    }
+    return true;
   }
 }

@@ -11,12 +11,8 @@ type PollContext = {
 
 define(Poll, (faker: typeof Faker, context: PollContext) => {
   const question = faker.lorem.sentence();
+  const closedDate = context?.closedDate ? context.closedDate : null;
+  const isClose = context?.isClose ? context.isClose : false;
 
-  const poll = new Poll();
-  poll.question = question;
-  poll.closedDate = context?.closedDate ? context.closedDate : null;
-  poll.isClose = context?.isClose ? context.isClose : false;
-  poll.author = context.author;
-
-  return poll;
+  return new Poll({ question, closedDate, isClose, author: context.author });
 });

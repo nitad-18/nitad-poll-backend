@@ -10,9 +10,5 @@ type PollOptionContext = {
 define(PollOption, (faker: typeof Faker, context: PollOptionContext) => {
   const topic = faker.lorem.word();
 
-  const option = new PollOption();
-  option.topic = topic;
-  option.poll = context.poll;
-
-  return option;
+  return new PollOption({ topic, poll: context.poll });
 });

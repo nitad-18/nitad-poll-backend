@@ -5,11 +5,7 @@ import { define } from 'typeorm-seeding';
 define(User, (faker: typeof Faker, context: { password: string }) => {
   const username = faker.internet.email();
   const displayName = faker.internet.userName();
+  const password = context?.password ? context.password : faker.internet.password();
 
-  const user = new User();
-  user.username = username;
-  user.displayName = displayName;
-  user.password = context?.password ? context.password : faker.internet.password();
-
-  return user;
+  return new User({ username, displayName, password });
 });
