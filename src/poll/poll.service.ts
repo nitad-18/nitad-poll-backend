@@ -6,30 +6,41 @@ import { Poll } from './entities/poll.entity';
 
 //  TODO #TASK 3 Complete all function inthe service EXCEPT vote and close
 //* You MUST assign the datatype to each function
-//*
 //* >> create
-//*     - save the relation of user and poll
+//*     - must save relation of poll and user (author)
+//*     - return Poll (not included updatedDate and deletedDate) instance if successfully created
 //*
-//* >> findAll and findOne
-//*     - return data must contain the author and users as type UserData
+//* >> findAll()
+//*     - return all poll in database type Poll[] (not included updatedDate and deletedDate)
+//*         ** return data must contain the author and users as type UserData **
 //*
-//* >> type UserData = {
-//*       id: number,
-//*       username: string,
-//*       displayName: string
-//*     }
+//* >> findOne(pollId: number)
+//*     - throw NotFoundException if not found poll
+//*     - return Poll (not included updatedDate and deletedDate) instance
+//*         ** return data must contain the author and users as type UserData **
+//*
+//* >> update(id: number, updatePollDto)
+//*     - throw NotFoundException if not found poll (affected === 0)
+//*     - return true if successfully updated
+//*
+//* >> delete(id: number)
+//*     - throw NotFoundException if not found poll (affected === 0)
+//*     - return true if successfully deleted
 //*
 
 // TODO #TASK 5 Complete the vote and close poll function
 //*
-//* >> vote
-//*     - if not found poll return null
-//*     - if cannot vote return undefined
-//*     - update users that vote poll and increase the votes by 1 if user can vote properly
+//* >> vote(user: User, pollId: number, optionId: number)
+//*     - throw NotFoundException if not found poll or not found poll-option,
+//*     - throw ForbiddenException if user cannot vote (already vote or poll is closed)
+//*     - update poll.users that user vote poll and increase the votes by 1 if user can vote
+//*     - return Poll (not included updatedDate and deletedDate) instance if successfully vote
+//*        ** return data must contain the author and users as type UserData **
 //*
-//* >> close
+//* >> close(poll: Poll)
 //*     - close the poll
-//*     - return poll
+//*     - return Poll (not included updatedDate and deletedDate) instance if successfully close
+//*        ** return data must contain the author and users as type UserData **
 
 @Injectable()
 export class PollService {
