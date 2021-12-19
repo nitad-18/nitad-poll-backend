@@ -110,7 +110,7 @@ export class PollService {
     }
     throw new NotFoundException({
       reason: 'NOT_FOUND_ENTITY',
-      message: 'Not found poll',
+      message: 'Not found option',
     });
   }
 

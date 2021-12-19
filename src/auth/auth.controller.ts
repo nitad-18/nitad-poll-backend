@@ -10,7 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UserData } from 'src/common/types/user';
 import { UserService } from 'src/user/user.service';
@@ -40,6 +40,15 @@ export class AuthController {
     return res.status(HttpStatus.OK).json(user);
   }
 
+  @ApiResponse({ status: 200 })
+  @ApiUnauthorizedResponse({
+    schema: {
+      properties: {
+        reason: { type: 'string', example: 'INVALID_INPUT' },
+        message: { type: 'string', example: 'incorrect username or password' },
+      },
+    },
+  })
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async profile(@Req() req, @Res() res: Response): Promise<Response> {
