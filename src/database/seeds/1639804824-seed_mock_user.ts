@@ -5,6 +5,7 @@ import { Factory, Seeder } from 'typeorm-seeding';
 
 export default class SeedMockUser implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<void> {
+    connection.isConnected;
     const SALTROUND = 10;
     const password = await bcrypt.hash('adminadmin', SALTROUND);
     await factory(User)().createMany(20, { password: password });

@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import * as faker from 'faker';
@@ -21,7 +21,7 @@ const testConnectionName = 'testUserServiceConnection';
 
 describe('UserService', () => {
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    await Test.createTestingModule({
       providers: [UserService, { provide: getRepositoryToken(User), useClass: Repository }],
     }).compile();
 
@@ -50,8 +50,12 @@ describe('UserService', () => {
 
     for (let i = 0; i < 10; i++) {
       let targetUserId: number = faker.datatype.number(49);
-      const { deletedDate, updatedDate, createdDate, password, ...result } = allUsers[targetUserId];
-      const targetUser: UserData = result;
+      const user = allUsers[targetUserId];
+      const targetUser: UserData = new User({
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+      });
       targetUserId++;
       targets.set(targetUserId, targetUser);
     }
