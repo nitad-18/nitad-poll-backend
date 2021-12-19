@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -31,27 +33,21 @@ export class PollController {
     @Req() req: RequestWithUserId,
     @Body() createPollDto: CreatePollDto,
     @Res() res: Response,
-  ) {
+  ): Promise<Response> {
     const user: User = await this.userService.findById(req.user.id);
-    if (!user) {
-      return res.status(404).send();
-    }
     const poll: PollWithoutDeletedDate = await this.pollService.create(createPollDto, user);
-    return res.status(201).json(poll);
+    return res.status(HttpStatus.CREATED).json(poll);
   }
 
   @Get()
-  async findAll(@Res() res: Response) {
-    return res.status(200).json(await this.pollService.findAll());
+  async findAll(@Res() res: Response): Promise<Response> {
+    return res.status(HttpStatus.OK).json(await this.pollService.findAll());
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res: Response) {
+  async findOne(@Param('id') id: string, @Res() res: Response): Promise<Response> {
     const poll = await this.pollService.findOne(+id);
-    if (!poll) {
-      return res.status(404).send();
-    }
-    return res.status(200).json(poll);
+    return res.status(HttpStatus.OK).json(poll);
   }
 
   @Patch(':id')
@@ -60,28 +56,27 @@ export class PollController {
     @Param('id') id: string,
     @Body() updatePollDto: UpdatePollDto,
     @Res() res: Response,
-  ) {
+  ): Promise<Response> {
     const poll = await this.pollService.findOne(+id);
-    if (!poll) {
-      return res.status(404).send();
-    }
     if (poll.author.id !== req.user.id) {
-      return res.status(403).send();
+      return res.status(HttpStatus.FORBIDDEN).send();
     }
-    return res.status(200).json(await this.pollService.updateEntity(poll, updatePollDto));
+    return res.status(HttpStatus.OK).json(await this.pollService.updateEntity(poll, updatePollDto));
   }
 
   @Delete(':id')
-  async remove(@Req() req: RequestWithUserId, @Param('id') id: string, @Res() res: Response) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(
+    @Req() req: RequestWithUserId,
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<Response> {
     const poll = await this.pollService.findOne(+id);
-    if (!poll) {
-      return res.status(404).send();
-    }
     if (poll.author.id !== req.user.id) {
-      return res.status(403).send();
+      return res.status(HttpStatus.FORBIDDEN).send();
     }
     await this.pollService.remove(+id);
-    return res.status(204).send();
+    return res.send();
   }
 
   @ApiParam({ name: 'pollId' })
@@ -92,30 +87,24 @@ export class PollController {
     @Param('pollId') pollId,
     @Param('optionId') optionId,
     @Res() res: Response,
-  ) {
+  ): Promise<Response> {
     const user = await this.userService.findById(+req.user.id);
     const poll = await this.pollService.vote(user, +pollId, +optionId);
-    if (typeof poll === 'undefined') {
-      return res.status(403).send();
-    }
-    if (!poll) {
-      return res.status(404).send();
-    }
-
-    return res.status(200).json(poll);
+    return res.status(HttpStatus.OK).json(poll);
   }
 
   @ApiParam({ name: 'id' })
   @Patch('close/:id')
-  async closeVote(@Req() req: RequestWithUserId, @Param('id') pollId, @Res() res: Response) {
+  async closeVote(
+    @Req() req: RequestWithUserId,
+    @Param('id') pollId,
+    @Res() res: Response,
+  ): Promise<Response> {
     const user = await this.userService.findById(+req.user.id);
     const poll = await this.pollService.findOne(+pollId);
-    if (!poll) {
-      return res.status(404).send();
-    }
     if (poll.author.id !== user.id) {
-      return res.status(403).send();
+      return res.status(HttpStatus.FORBIDDEN).send();
     }
-    return res.status(200).json(await this.pollService.close(poll));
+    return res.status(HttpStatus.OK).json(await this.pollService.close(poll));
   }
 }

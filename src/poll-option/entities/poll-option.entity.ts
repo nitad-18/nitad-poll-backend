@@ -31,4 +31,8 @@ export class PollOption {
 
   @DeleteDateColumn({ name: 'deleted_date', select: false })
   deletedDate: Date;
+
+  constructor(partial: Partial<PollOption>) {
+    Object.assign(this, partial);
+  }
 }
