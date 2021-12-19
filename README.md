@@ -21,6 +21,17 @@
   $ git clone -b template https://github.com/Nitad-18/nitad-poll-backend.git
 ```
 
+## Installation
+
+- **If this is the first time to use NestJS**
+  ```bash
+  $ yarn global add @nestjs/cli 
+  ```
+- Install Package
+  ```bash
+  $ yarn install
+  ```
+
 ## Setup ENV File
 
 - Create new files **_.env.development_** and **_.env.production_**
@@ -28,9 +39,9 @@
 - Setup .env file (fill in the blank)
   <br/>
   - **`PORT`** Any number(default 4000)<br/>
-  - **DATABASE_NAME** Name of the database (customize but NOT BLANK)<br/>
-  - **DATABASE_USERNAME** username (customize but NOT BLANK)<br/>
-  - **DATABASE_PASSWORD** password (customize)
+  - **`DATABASE_NAME`** Name of the database (customize but NOT BLANK)<br/>
+  - **`DATABASE_USERNAME`** username (customize but NOT BLANK)<br/>
+  - **`DATABASE_PASSWORD`** password (customize)
   <br/>
 
 ## Database
@@ -47,17 +58,6 @@
 2. Fill the blank textbox with your credential in .env.development file
 3. Click Test (if not thing wrong connection is OK)
 4. Press connnect
-
-## Installation
-
-- **If this is the first time to use NestJS**
-  ```bash
-  $ yarn global add @nestjs/cli 
-  ```
-- Install Package
-  ```bash
-  $ yarn install
-  ```
 
 ## Running the app
 - start the service
