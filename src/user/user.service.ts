@@ -48,7 +48,6 @@ export class UserService {
           id: user.id,
           username: user.username,
           displayName: user.displayName,
-          password: user.password,
         }),
     );
   }
