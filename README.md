@@ -148,6 +148,14 @@ After we create all essential entity for our service next we will create a funct
 After we finished all requirement for our service the last thing we must do is create a API documentation for **frontend dev** and monitoring for **devops**
 - open the `main.ts` file and setup API DOC and Swagger-Stats
 
+### Generate a mock data (Optional)
+- this command will generate 20 users and 10 polls with 2 up to 7 poll-options in each poll
+- password = `adminadmin`
+- run command
+  ```bash
+  $ yarn seed:run
+  ```
+
 ## Doc List
   - NestJS
     - [Official Doc](https://docs.nestjs.com)
