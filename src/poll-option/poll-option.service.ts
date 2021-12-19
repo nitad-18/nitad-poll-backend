@@ -23,7 +23,12 @@ export class PollOptionService {
     }
     const pollOption = await this.pollOptionRepository.create(createPollOptionDto);
     pollOption.poll = poll;
-    return await this.pollOptionRepository.save(pollOption);
+    const createdOption = await this.pollOptionRepository.save(pollOption);
+    return new PollOption({
+      id: createdOption.id,
+      topic: createdOption.topic,
+      votes: createdOption.votes,
+    });
   }
 
   async findAll(): Promise<PollOption[]> {
