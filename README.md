@@ -91,6 +91,22 @@ this command will generate 20 users and 10 polls with 2 up to 7 poll-options in 
 ## Swagger-Stats
 - Go to path `http://localhost:<PORT>/swagger-stats`
   
+## PG Admin
+- Go to path `http://localhost:<PG_ADMIN_PORT>` (PORT in .env.development file)
+- Login by using data in .env.development file
+- open cmd/terminal and run command
+    - `docker network inspect nitad-poll-backend_default`
+    - find the IPV4Address of container name nitad-poll-db and copy it 
+    - eg IPV4Address = 172.168.0.2/16 ----> COPY ONLY 172.168.0.2
+- click add new server and fill name (anything)
+    - click at connection tap and fill host with the IPV4Address that you copied
+    - then fill the rest with data in .env.development (maintainance database === database name)
+    - leave ROLE and SERVICE with blank (don't fill)
+    - click save
+- view data
+    - goto servers -> <your server name> -> databases -> <your database name> -> schemas -> tables -> <table name>
+    - right click the <table name> and then click at `view/edit data` and select amount that you want to display
+  
 ## Etc Command
   ```bash
   # format code template
