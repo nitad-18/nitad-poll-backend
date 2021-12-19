@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
 import { LoginDto } from 'src/auth/dto/login.dto';
 import { RegisterDto } from 'src/auth/dto/register.dto';
-import { UserData } from 'src/utilities/type';
+import { UserData } from 'src/common/types/user';
 import { DeleteResult, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 

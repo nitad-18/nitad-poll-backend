@@ -2,7 +2,6 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { PollOption } from 'src/poll-option/entities/poll-option.entity';
 import { User } from 'src/user/entities/user.entity';
-import { PollWithoutDeletedDate } from 'src/utilities/type';
 import { Repository } from 'typeorm';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
@@ -15,7 +14,7 @@ export class PollService {
     @InjectRepository(PollOption) private pollOptionRepository: Repository<PollOption>,
   ) {}
 
-  async create(createPollDto: CreatePollDto, user: User): Promise<PollWithoutDeletedDate> {
+  async create(createPollDto: CreatePollDto, user: User): Promise<Poll> {
     const poll = await this.pollRepository.create(createPollDto);
     poll.author = user;
     const createdPoll = await this.pollRepository.save(poll);

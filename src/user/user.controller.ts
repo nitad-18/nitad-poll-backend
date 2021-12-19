@@ -12,7 +12,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { EditProfileDto } from 'src/auth/dto/edit-profile.dto';
-import { UserData } from 'src/utilities/type';
+import { UserData } from 'src/common/types/user';
 import { UserService } from './user.service';
 
 @ApiTags('User')

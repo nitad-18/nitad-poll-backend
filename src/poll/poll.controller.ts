@@ -15,11 +15,12 @@ import {
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RequestWithUserId } from 'src/common/types/auth';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
-import { PollWithoutDeletedDate, RequestWithUserId } from 'src/utilities/type';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
+import { Poll } from './entities/poll.entity';
 import { PollService } from './poll.service';
 
 @ApiTags('Poll')
@@ -35,7 +36,7 @@ export class PollController {
     @Res() res: Response,
   ): Promise<Response> {
     const user: User = await this.userService.findById(req.user.id);
-    const poll: PollWithoutDeletedDate = await this.pollService.create(createPollDto, user);
+    const poll: Poll = await this.pollService.create(createPollDto, user);
     return res.status(HttpStatus.CREATED).json(poll);
   }
 

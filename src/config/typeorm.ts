@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { ConnectionOptionsWithSeed } from 'src/utilities/type';
+import { ConnectionOptionsWithSeed } from 'src/common/types/config';
 
 const envType = process.env.MODE_ENV || 'development';
 
