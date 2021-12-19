@@ -28,10 +28,8 @@ export class PollOptionController {
 
   @Post()
   async create(@Body() createPollOptionDto: CreatePollOptionDto, @Res() res: Response) {
-    const { poll, deletedDate, ...result } = await this.pollOptionService.create(
-      createPollOptionDto,
-    );
-    return res.status(HttpStatus.CREATED).json(result);
+    const option = await this.pollOptionService.create(createPollOptionDto);
+    return res.status(HttpStatus.CREATED).json(option);
   }
 
   @Get()
