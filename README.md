@@ -85,6 +85,12 @@ this command will generate 20 users and 10 polls with 2 up to 7 poll-options in 
   $ yarn start:prod
   ```
   
+## API Doc
+- Go to path `http://localhost:<PORT>/api`
+
+## Swagger-Stats
+- Go to path `http://localhost:<PORT>/swagger-stats`
+  
 ## Etc Command
   ```bash
   # format code template
@@ -108,4 +114,3 @@ this command will generate 20 users and 10 polls with 2 up to 7 poll-options in 
   # run seeds and factorires files
   $ yarn seed:run
   ```
-
