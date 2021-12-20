@@ -39,7 +39,7 @@ export class UserController {
     @Res() res: Response,
   ) {
     await this.userService.update(+id, editProfileDto);
-    const user = this.userService.findById(+id);
+    const user = await this.userService.findById(+id);
     return res.status(HttpStatus.OK).json(user);
   }
 
