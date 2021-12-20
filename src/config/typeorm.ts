@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import { ConnectionOptionsWithSeed } from 'src/common/types/config';
 
-const envType = process.env.MODE_ENV || 'development';
+const envType = process.env.NODE_ENV || 'development';
 
 dotenv.config({ path: `.env.${envType}` });
 
