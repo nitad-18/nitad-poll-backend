@@ -32,7 +32,7 @@ export class PollOptionService {
   }
 
   async findAll(): Promise<PollOption[]> {
-    return await this.pollOptionRepository.find({ select: ['id', 'topic', 'votes'] });
+    return await this.pollOptionRepository.find({ relations: ['poll'] });
   }
 
   async findOne(id: number): Promise<PollOption> {
