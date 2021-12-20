@@ -37,7 +37,7 @@ export class PollOptionService {
 
   async findOne(id: number): Promise<PollOption> {
     const option = await this.pollOptionRepository
-      .createQueryBuilder()
+      .createQueryBuilder('poll_option')
       .where('poll_option.id = :id', { id: id })
       .select([
         'poll_option.id',
@@ -51,7 +51,6 @@ export class PollOptionService {
         'user.username',
         'user.displayName',
       ])
-      .from(PollOption, 'poll_option')
       .leftJoin('poll_option.poll', 'poll')
       .leftJoin('poll.author', 'user')
       .getOne();
