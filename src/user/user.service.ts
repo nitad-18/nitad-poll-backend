@@ -56,7 +56,6 @@ export class UserService {
     const user: User = await this.userRepository
       .createQueryBuilder('user')
       .where({ username: loginDto.username })
-      .select(['user.id', 'user.username', 'user.displayName'])
       .addSelect('user.password')
       .getOne();
 
