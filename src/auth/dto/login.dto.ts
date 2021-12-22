@@ -1,4 +1,4 @@
-//  TODO #TASK 2 Complete the register dto
+//  TODO #TASK 2 Complete the login dto
 //* Schema MUSH be
 //* {
 //*   username: string     <----------- CANNOT Be Empty
