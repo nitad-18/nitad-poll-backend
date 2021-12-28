@@ -40,3 +40,9 @@ lerna-debug.log*
 
 #sqlite
 *.sqlite
+
+# test coverage
+coverage
+
+# docker volumes
+volumes
