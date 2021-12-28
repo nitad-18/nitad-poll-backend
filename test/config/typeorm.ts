@@ -12,7 +12,7 @@ type ConnectionOptionsWithSeed = ConnectionOptions & {
 
 const options: ConnectionOptionsWithSeed = {
   type: 'sqlite',
-  database: '../test.sqlite',
+  database: ':memory:',
   dropSchema: true,
   synchronize: true,
   logging: false,
@@ -23,6 +23,7 @@ const options: ConnectionOptionsWithSeed = {
   cli: {
     migrationsDir: 'src/database/migrations',
   },
+  name: 'memory',
 };
 
 export = options;

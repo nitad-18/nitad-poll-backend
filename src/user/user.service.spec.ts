@@ -9,9 +9,8 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import * as faker from 'faker';
-import * as connectionConfig from 'test/config/typeorm';
-import { Connection, createConnection, getConnection, getRepository, Repository } from 'typeorm';
-import { factory, useSeeding } from 'typeorm-seeding';
+import { Connection, getRepository, Repository } from 'typeorm';
+import { factory, tearDownDatabase, useRefreshDatabase, useSeeding } from 'typeorm-seeding';
 import { EditProfileDto } from '../auth/dto/edit-profile.dto';
 import { LoginDto } from '../auth/dto/login.dto';
 import { RegisterDto } from '../auth/dto/register.dto';
@@ -23,17 +22,16 @@ let service: UserService;
 let repository: Repository<User>;
 let connection: Connection;
 
-const testConnectionName = 'testUserServiceConnection';
-const USER_NUMBER = 10;
+const NUMBER_OF_USERS = 10;
 
 async function initializeDatabase() {
   await useSeeding({
-    connection: connectionConfig.name,
+    connection: 'memory',
     root: 'test/config',
     configName: 'typeorm.ts',
   });
 
-  await factory(User)().createMany(USER_NUMBER);
+  await factory(User)().createMany(NUMBER_OF_USERS);
 }
 describe('UserService', () => {
   beforeEach(async () => {
@@ -41,26 +39,25 @@ describe('UserService', () => {
       providers: [UserService, { provide: getRepositoryToken(User), useClass: Repository }],
     }).compile();
 
-    connection = await createConnection({
-      type: 'sqlite',
-      database: 'test/test.sqlite',
-      dropSchema: true,
-      entities: ['src/**/entities/*.entity{.ts,.js}'],
-      synchronize: true,
-      logging: false,
-      name: testConnectionName,
+    connection = await useRefreshDatabase({
+      connection: 'memory',
+      root: 'test/config',
+      configName: 'typeorm.ts',
     });
 
-    repository = getRepository(User, testConnectionName);
-    repository.clear();
-    service = new UserService(repository);
     await initializeDatabase();
 
+    repository = getRepository(User, 'memory');
+    service = new UserService(repository);
     return connection;
   });
 
   afterEach(async () => {
-    await getConnection(testConnectionName).close();
+    repository.clear();
+  });
+
+  afterAll(async () => {
+    await tearDownDatabase();
   });
 
   it('should be defined', () => {
@@ -69,7 +66,7 @@ describe('UserService', () => {
 
   describe('find all', () => {
     it('Should be find all users', async () => {
-      expect((await service.findAll()).length).toBe(USER_NUMBER);
+      expect((await service.findAll()).length).toBe(NUMBER_OF_USERS);
     });
   });
 
@@ -146,9 +143,9 @@ describe('UserService', () => {
 
   describe('find by ID', () => {
     it.each`
-      id             | case
-      ${1}           | ${'first user'}
-      ${USER_NUMBER} | ${'last user'}
+      id                 | case
+      ${1}               | ${'first user'}
+      ${NUMBER_OF_USERS} | ${'last user'}
     `('should return userData if valid ID, ($case)', async ({ id }) => {
       const user = await service.findById(id);
 
@@ -156,9 +153,9 @@ describe('UserService', () => {
     });
 
     it.each`
-      id                 | case
-      ${-1}              | ${'negative ID'}
-      ${USER_NUMBER + 1} | ${'exceed ID'}
+      id                     | case
+      ${-1}                  | ${'negative ID'}
+      ${NUMBER_OF_USERS + 1} | ${'exceed ID'}
     `('should throw NotFoundException if invalid ID, ($case)', async ({ id }) => {
       const fn = async () => await service.findById(id);
 
@@ -193,9 +190,9 @@ describe('UserService', () => {
       }
     });
     it.each`
-      id                 | case
-      ${-1}              | ${'negative ID'}
-      ${USER_NUMBER + 1} | ${'exceed ID'}
+      id                     | case
+      ${-1}                  | ${'negative ID'}
+      ${NUMBER_OF_USERS + 1} | ${'exceed ID'}
     `('should throw NotFoundException if not found user ($case)', async ({ id }) => {
       const editProfileDto: EditProfileDto = {};
       const fn = async () => await service.update(id, editProfileDto);
@@ -206,9 +203,9 @@ describe('UserService', () => {
 
   describe('delete', () => {
     it.each`
-      ids                 | case
-      ${[1]}              | ${'delete single users'}
-      ${[1, USER_NUMBER]} | ${'delete multiple users'}
+      ids                     | case
+      ${[1]}                  | ${'delete single users'}
+      ${[1, NUMBER_OF_USERS]} | ${'delete multiple users'}
     `('should remove user correctly, ($case)', async ({ ids }) => {
       for (let i = 0; i < ids.length; i++) {
         await service.remove(ids[i]);
@@ -216,16 +213,16 @@ describe('UserService', () => {
 
       const users = await repository.find();
 
-      expect(users.length).toEqual(USER_NUMBER - ids.length);
+      expect(users.length).toEqual(NUMBER_OF_USERS - ids.length);
 
       for (let i = 0; i < users.length; i++) {
         expect(ids).not.toContain(users[i]);
       }
     });
     it.each`
-      id                 | case
-      ${-1}              | ${'negative ID'}
-      ${USER_NUMBER + 1} | ${'exceed ID'}
+      id                     | case
+      ${-1}                  | ${'negative ID'}
+      ${NUMBER_OF_USERS + 1} | ${'exceed ID'}
     `('should throw NotFoundException if invalid user ID, ($case)', async ({ id }) => {
       const fn = async () => await service.remove(id);
 
