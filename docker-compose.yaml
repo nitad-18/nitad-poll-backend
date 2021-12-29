@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  database:
+  db:
     image: postgres:14.1
     container_name: nitad-poll-db
     restart: unless-stopped
@@ -11,69 +11,20 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
-      - ./volumes/postgres:/var/postgres/data
-    networks:
-      - nitad-poll
+      - /volumes/postgresql/data
     ports:
       - ${DATABASE_PORT}:${DATABASE_PORT}
     command: -p ${DATABASE_PORT}
 
-  directus:
-    image: directus/directus:9.4
-    container_name: nitad-poll-directus
-    restart: unless-stopped
-    ports:
-      - ${DIRECTUS_PORT}:${DIRECTUS_PORT}
-    volumes:
-      - ./volumes/upload:/var/directus/uploads
-      - ./directus/hooks:/var/directus/extendsion/hooks
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: nitad-poll-pgadmin
+    restart: always
     environment:
-      KEY: ${DIRECTUS_KEY}
-      SECRET: ${DIRECTUS_SECRET}
-      DB_CLIENT: 'pg'
-      DB_HOST: 'database'
-      DB_PORT: ${DATABASE_PORT}
-      DB_DATABASE: ${DATABASE_NAME}
-      DB_USER: ${DATABASE_USERNAME}
-      DB_PASSWORD: ${DATABASE_PASSWORD}
-      CACHE_ENABLED: 'false'
-
-      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
-
-      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL}
-    networks:
-      - nitad-poll
-
-  influxdb:
-    container_name: nitad-poll-influxdb
-    image: influxdb:2.1.1
-    environment:
-      TZ: Asia/Bangkok
-      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_USERNAME}
-      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_PASSWORD}
-      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG}
-      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_PORT}
     ports:
-      - ${INFLUXDB_PORT}:${INFLUXDB_PORT}
+      - ${PGADMIN_PORT}:${PGADMIN_PORT}
     volumes:
-      - ./volumes/influxdb:/var/lib/influxdb2
-    networks:
-      - nitad-poll
-    command: bash -c 'influxd run --bolt-path /var/lib/influxdb2/influxd.bolt --engine-path /var/lib/influxdb2/engine --store bolt'
-
-  grafana:
-    container_name: nitad-poll-grafana
-    image: grafana/grafana-oss:main
-    ports:
-      - ${GRAFANA_PORT}:${GRAFANA_PORT}
-    environment:
-      GF_SERVER_HTTP_PORT: ${GRAFANA_PORT}
-    volumes:
-      - ./volumes/grafana:/var/lib/grafana
-    networks:
-      - nitad-poll
-
-networks:
-  nitad-poll:
-    name: nitad-poll
+      - /pgadmin/servers.json:/pgadmin4/servers.json
