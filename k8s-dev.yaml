@@ -72,3 +72,38 @@ spec:
                 configMapKeyRef:
                   name: nitad-poll
                   key: migration_path
+            - name: INFLUXDB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: host
+            - name: INFLUXDB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: influxdb-password
+            - name: INFLUXDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: influxdb-password
+            - name: INFLUXDB_ORG
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: org
+            - name: INFLUXDB_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: bucket
+            - name: INFLUXDB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: database_port
+            - name: INFLUXDB_TOKEN
+              valueFrom:
+                configMapKeyRef:
+                  name: influxdb
+                  key: token
