@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nitad-poll
+  namespace: dev
+  labels:
+    app: nitad-poll
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nitad-poll
+  template:
+    metadata:
+      labels:
+        app: nitad-poll
+    spec:
+      containers:
+        - name: nitad-poll
+          image: ghcr.io/nitad-18/nitad-poll-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: postgres-username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: postgres-password
+            - name: DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres
+                  key: database_name
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres
+                  key: database_port
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres
+                  key: database_host
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: nitad-poll
+                  key: port
+            - name: SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: nitad-poll
+                  key: secret
+            - name: TOKEN_DURATION
+              valueFrom:
+                configMapKeyRef:
+                  name: nitad-poll
+                  key: token_duration
+            - name: ENTITY_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: nitad-poll
+                  key: entity_path
+            - name: MIGRATION_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: nitad-poll
+                  key: migration_path
